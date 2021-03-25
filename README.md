@@ -1,4 +1,13 @@
-# solace
+# GraphQl_practice
 
-A `flask` project for `websocket` practice.
+A `flask` project for `GraphQl` practice.
+
+### Setup
+
+### Models
+- User
+- Post
+
+
+### Queries
 
