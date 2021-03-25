@@ -1,7 +1,13 @@
-from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 import graphene
+from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from application.extensions import db, ma
+
+
+engine = create_engine('postgres://postgres:postgres@localhost/graphql_dev')
+Session = sessionmaker(bind=engine)
 
 
 class User(db.Model):
@@ -26,7 +32,10 @@ class Post(db.Model):
     body = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    users = db.relationship('User')
+    user = db.relationship(
+        'User',
+        backref='user'
+    )
 
     def __repr__(self):
         return '<Post %r>' % self.title
@@ -54,6 +63,15 @@ class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
     all_posts = SQLAlchemyConnectionField(PostObject)
     all_users = SQLAlchemyConnectionField(UserObject)
+
+    def resolve_all_posts(self, info):
+        posts = Post.query.all()
+        for post in posts:
+            user = User.query.get(post.author_id)
+            if user:
+                post.user = user
+
+        return Post.query.all()
 
 
 # noinspection PyTypeChecker

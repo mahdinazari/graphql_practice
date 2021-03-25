@@ -28,11 +28,13 @@ post1 = Post()
 post1.title = "Blog Post Title 1"
 post1.body = "This is the first blog post 1"
 post1.author = user1
+post1.user = user1
 
 post2 = Post()
 post2.title = "Blog Post Title 2"
 post2.body = "This is the first blog post 2"
 post2.author = user2
+post2.user = user2
 
 db.session.add(post1)
 db.session.add(post2)

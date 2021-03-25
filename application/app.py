@@ -38,6 +38,10 @@ def create_app(config_filename):
         response.status_code = error.status_code
         return response
 
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db.session.remove()
+
     app.app_context().push()
     return app
 
